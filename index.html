@@ -35,46 +35,34 @@ button{
 #no{background:#f44336;color:#fff}
 #next{display:none;background:#2196F3;color:#fff}
 
-#reply{
+#reply{margin-top:12px;display:none;font-size:16px}
+.ascii{
   margin-top:10px;
+  background:#fff0f5;
+  padding:10px;
+  border-radius:12px;
+  font-size:12px;
+  line-height:1.3;
   display:none;
-  white-space:pre-wrap;
-  line-height:1.4;
+  white-space:pre;
 }
 
-/* 🎆 Fireworks */
-.firework{
-  position:fixed;width:6px;height:6px;
-  animation:explode 1s ease-out forwards;
-}
+/* Fireworks */
+.firework{position:fixed;width:6px;height:6px;animation:explode 1s ease-out forwards}
 @keyframes explode{
-to{
-  box-shadow:
-    0 -60px red,
-    0 60px yellow,
-    60px 0 blue,
-    -60px 0 pink,
-    45px 45px orange,
-    -45px -45px violet;
-  opacity:0;
-}}
+to{box-shadow:0 -60px red,0 60px yellow,60px 0 blue,-60px 0 pink,45px 45px orange,-45px -45px violet;opacity:0}
+}
 
-/* 💖 Hearts */
-.heart{
-  position:fixed;
-  bottom:-20px;
-  font-size:24px;
-  animation:floatUp 4s linear forwards;
-}
-@keyframes floatUp{
-to{transform:translateY(-110vh);opacity:0}
-}
+/* Hearts */
+.heart{position:fixed;bottom:-20px;font-size:24px;animation:floatUp 4s linear forwards}
+@keyframes floatUp{to{transform:translateY(-110vh);opacity:0}}
 
 textarea{
   width:90%;height:70px;
   border-radius:10px;border:1px solid #ccc;
   padding:8px;display:none;
 }
+
 .whatsapp{display:none;margin-top:15px}
 .whatsapp a{color:#25D366;font-weight:bold;text-decoration:none}
 </style>
@@ -83,8 +71,10 @@ textarea{
 <body>
 <div class="card">
   <div class="cat">🐱💖</div>
+
   <h2 id="question"></h2>
   <div id="reply"></div>
+  <div id="asciiBox" class="ascii"></div>
 
   <textarea id="messageBox" placeholder="You can type anything here 😊"></textarea>
 
@@ -101,8 +91,8 @@ textarea{
 <!-- 🔥 FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, addDoc, collection, serverTimestamp } from
-"https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, addDoc, collection, serverTimestamp }
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig={
   apiKey:"AIzaSyAvN7xo_47Mso2rubw1b4vOKWO548f2AxU",
@@ -116,7 +106,7 @@ const firebaseConfig={
 const app=initializeApp(firebaseConfig);
 const db=getFirestore(app);
 
-window.saveResponse = async (data)=>{
+window.saveResponse=async(data)=>{
   await addDoc(collection(db,"responses"),{
     ...data,
     time:serverTimestamp()
@@ -136,20 +126,44 @@ const questions=[
 ];
 
 const replies=[
- "I also like you 😊",
+ "I always like you 😊",
  "I do have a crush on you 😄",
- "I am always waiting for your text 💬",
+ "I love talking with you 💬",
  "I feel the same way 🤍",
- "I Love You Tooooooo ❤️",
- "I’m listening… 😊",
+ "I LOVE YOU TOO ❤️",
+ "I’m listening 😊",
  ""
 ];
 
-let i=0,noCount=0;
-let yesSize=16,noSize=16;
+const asciiArts=[
+` /)   /)
+( ᵔ ᵕ ᵔ )
+/ づ  づ ~ ♡`,
+
+`( ˶ˆ꒳ˆ˵ )
+   ♡ ♡`,
+
+`( •̀ ω •́ )✧
+   💬`,
+
+`(｡♥‿♥｡)
+   ✨`,
+
+`∧,,,∧
+(  ̳• · • ̳)
+/    づ♡`,
+
+`(≧◡≦)
+   😊`,
+
+``
+];
+
+let i=0,noCount=0,yesSize=16,noSize=16;
 
 const q=document.getElementById("question");
 const r=document.getElementById("reply");
+const ascii=document.getElementById("asciiBox");
 const yes=document.getElementById("yes");
 const no=document.getElementById("no");
 const next=document.getElementById("next");
@@ -159,52 +173,60 @@ const wa=document.getElementById("whatsappBox");
 q.innerText=questions[i];
 
 function typeText(text){
-  r.innerHTML="";
+  r.innerText="";
   r.style.display="block";
   let x=0;
   const t=setInterval(()=>{
-    r.innerHTML+=text[x++];
-    if(x>=text.length) clearInterval(t);
+    r.innerText+=text.charAt(x++);
+    if(x>=text.length)clearInterval(t);
   },40);
 }
 
 no.onclick=()=>{
   noCount++;
-  yesSize+=4; noSize-=2;
+  yesSize+=4;noSize-=2;
   yes.style.fontSize=yesSize+"px";
   no.style.fontSize=Math.max(noSize,8)+"px";
 };
 
 yes.onclick=async()=>{
   yes.style.display=no.style.display="none";
+
   typeText(replies[i]);
+
+  if(asciiArts[i]){
+    ascii.innerText=asciiArts[i];
+    ascii.style.display="block";
+  }
 
   await saveResponse({
     question:questions[i],
     yes:true,
     noClicks:noCount,
-    message:msg.value || ""
+    message:msg.value||""
   });
 
   if(i===4){fireworks();hearts();}
-  if(i===5) msg.style.display="block";
+  if(i===5)msg.style.display="block";
 
   if(i===6){
     wa.style.display="block";
     q.innerText="Thank you for spending a little time with me 😊💖";
     return;
   }
+
   next.style.display="inline-block";
 };
 
 next.onclick=()=>{
-  i++; noCount=0;
+  i++;noCount=0;
   reset();
   q.innerText=questions[i];
 };
 
 function reset(){
   r.style.display="none";
+  ascii.style.display="none";
   msg.style.display="none";
   yes.style.display=no.style.display="inline-block";
   next.style.display="none";
@@ -222,6 +244,7 @@ function fireworks(){
     setTimeout(()=>f.remove(),1000);
   }
 }
+
 function hearts(){
   for(let j=0;j<12;j++){
     const h=document.createElement("div");
