@@ -5,186 +5,127 @@
 <title>Just a Few Questions 😊</title>
 
 <style>
-body {
-    margin: 0;
-    height: 100vh;
-    background: linear-gradient(to right, #fbc2eb, #a6c1ee);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: Arial, sans-serif;
-    overflow: hidden;
+body{
+  margin:0;
+  height:100vh;
+  background:linear-gradient(to right,#fbc2eb,#a6c1ee);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-family:Arial,sans-serif;
+  overflow:hidden;
 }
-
-.card {
-    background: white;
-    padding: 25px;
-    border-radius: 20px;
-    width: 360px;
-    text-align: center;
-    z-index: 2;
+.card{
+  background:#fff;
+  padding:25px;
+  border-radius:20px;
+  width:360px;
+  text-align:center;
 }
+.cat{font-size:60px;animation:bounce 1.5s infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
 
-.cat {
-    font-size: 60px;
-    animation: bounce 1.5s infinite;
+button{
+  border:none;border-radius:25px;
+  padding:12px 25px;margin:10px;
+  font-size:16px;cursor:pointer;
+  transition:.3s;
 }
+#yes{background:#4CAF50;color:#fff}
+#no{background:#f44336;color:#fff}
+#next{display:none;background:#2196F3;color:#fff}
 
-@keyframes bounce {
-    0%,100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-}
-
-h2 { color: #333; }
-
-button {
-    border: none;
-    border-radius: 25px;
-    padding: 12px 25px;
-    margin: 10px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-#yes { background: #4CAF50; color: white; }
-#no { background: #f44336; color: white; }
-#next { display: none; background: #2196F3; color: white; }
-
-#gift {
-    display: none;
-    font-size: 45px;
-}
-
-pre {
-    background: #fff0f5;
-    padding: 12px;
-    border-radius: 12px;
-    font-size: 11px;
-    line-height: 1.2;
-    display: inline-block;
-    text-align: left;
-}
-
-textarea {
-    width: 90%;
-    height: 70px;
-    border-radius: 10px;
-    border: 1px solid #ccc;
-    padding: 8px;
-    display: none;
-}
-
-.whatsapp {
-    display: none;
-    margin-top: 15px;
-    font-size: 18px;
-}
-.whatsapp a {
-    color: #25D366;
-    font-weight: bold;
-    text-decoration: none;
-}
-
-/* 🌹 Roses */
-.rose {
-    position: fixed;
-    top: -50px;
-    font-size: 30px;
-    animation: fall 4s linear forwards;
-}
-@keyframes fall {
-    to { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+#reply{
+  margin-top:10px;
+  display:none;
+  white-space:pre-wrap;
+  line-height:1.4;
 }
 
 /* 🎆 Fireworks */
-.firework {
-    position: fixed;
-    width: 6px;
-    height: 6px;
-    animation: explode 1s ease-out forwards;
+.firework{
+  position:fixed;width:6px;height:6px;
+  animation:explode 1s ease-out forwards;
 }
-@keyframes explode {
-    to {
-        box-shadow:
-            0 -60px red,
-            0 60px yellow,
-            60px 0 blue,
-            -60px 0 pink,
-            45px 45px orange,
-            -45px -45px violet;
-        opacity: 0;
-    }
+@keyframes explode{
+to{
+  box-shadow:
+    0 -60px red,
+    0 60px yellow,
+    60px 0 blue,
+    -60px 0 pink,
+    45px 45px orange,
+    -45px -45px violet;
+  opacity:0;
+}}
+
+/* 💖 Hearts */
+.heart{
+  position:fixed;
+  bottom:-20px;
+  font-size:24px;
+  animation:floatUp 4s linear forwards;
 }
+@keyframes floatUp{
+to{transform:translateY(-110vh);opacity:0}
+}
+
+textarea{
+  width:90%;height:70px;
+  border-radius:10px;border:1px solid #ccc;
+  padding:8px;display:none;
+}
+.whatsapp{display:none;margin-top:15px}
+.whatsapp a{color:#25D366;font-weight:bold;text-decoration:none}
 </style>
 </head>
 
 <body>
-
 <div class="card">
-<div class="cat">🐱💖</div>
+  <div class="cat">🐱💖</div>
+  <h2 id="question"></h2>
+  <div id="reply"></div>
 
-<h2 id="question"></h2>
+  <textarea id="messageBox" placeholder="You can type anything here 😊"></textarea>
 
-<!-- ASCII RESPONSES -->
+  <div class="whatsapp" id="whatsappBox">
+    Tap to message me on WhatsApp 😊<br>
+    <a href="https://wa.me/918300568519" target="_blank">📱 8300568519</a>
+  </div>
 
-<div id="likeBox" style="display:none;">
-<h3>i always like you ☺️</h3>
-<pre>
- /)   /)
-( ᵔ ᵕ ᵔ )
-/ づ  づ ~ ♡
-</pre>
+  <button id="yes">Yes 💙</button>
+  <button id="no">No 🤍</button>
+  <button id="next">Next ➡️</button>
 </div>
 
-<div id="crushBox" style="display:none;">
-<h3>🫣 i too</h3>
-<pre>
-( ˶ˆ꒳ˆ˵ )
-</pre>
-</div>
+<!-- 🔥 FIREBASE -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, addDoc, collection, serverTimestamp } from
+"https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-<div id="talkBox" style="display:none;">
-<h3>I am always waiting for your text 😊</h3>
-<pre>
-( •̀ ω •́ )✧
-</pre>
-</div>
+const firebaseConfig={
+  apiKey:"AIzaSyAvN7xo_47Mso2rubw1b4vOKWO548f2AxU",
+  authDomain:"just-a-few-questions.firebaseapp.com",
+  projectId:"just-a-few-questions",
+  storageBucket:"just-a-few-questions.appspot.com",
+  messagingSenderId:"367392163708",
+  appId:"1:367392163708:web:2b5273467744c74e2086f9"
+};
 
-<div id="knowBox" style="display:none;">
-<h3>I want too 😇</h3>
-<pre>
-(｡♥‿♥｡)
-</pre>
-</div>
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
 
-<div id="loveBox" style="display:none;">
-<pre>
-∧,,,∧
-(  ̳• · • ̳)
-/    づ♡
-</pre>
-<h3>I love you too 🥰</h3>
-</div>
-
-<textarea id="messageBox" placeholder="You can type anything here 😊"></textarea>
-
-<div id="gift">🎁🐱</div>
-
-<button id="yes" onclick="yesClick()">Yes 💙</button>
-<button id="no" onclick="noClick()">No 🤍</button>
-
-<button id="next" onclick="nextQuestion()">Next ➡️</button>
-
-<div class="whatsapp" id="whatsappBox">
-Tap to message me on WhatsApp 😊<br>
-<a href="https://wa.me/918300568519" target="_blank">📱 8300568519</a>
-</div>
-
-</div>
+window.saveResponse = async (data)=>{
+  await addDoc(collection(db,"responses"),{
+    ...data,
+    time:serverTimestamp()
+  });
+};
+</script>
 
 <script>
-const questions = [
+const questions=[
  "Do you like me? 😊",
  "Do you have a crush on me? 😄",
  "Do you enjoy talking with me? 💬",
@@ -194,75 +135,103 @@ const questions = [
  "If you feel comfortable, would you like to text me on WhatsApp? 😊"
 ];
 
-let i = 0, yesSize = 16, noSize = 16;
-question.innerText = questions[i];
+const replies=[
+ "I also like you 😊",
+ "I do have a crush on you 😄",
+ "I am always waiting for your text 💬",
+ "I feel the same way 🤍",
+ "I Love You Tooooooo ❤️",
+ "I’m listening… 😊",
+ ""
+];
 
-function noClick() {
- if (navigator.vibrate) navigator.vibrate(120);
- yesSize += 4; noSize -= 2;
- yes.style.fontSize = yesSize + "px";
- no.style.fontSize = Math.max(noSize, 8) + "px";
+let i=0,noCount=0;
+let yesSize=16,noSize=16;
+
+const q=document.getElementById("question");
+const r=document.getElementById("reply");
+const yes=document.getElementById("yes");
+const no=document.getElementById("no");
+const next=document.getElementById("next");
+const msg=document.getElementById("messageBox");
+const wa=document.getElementById("whatsappBox");
+
+q.innerText=questions[i];
+
+function typeText(text){
+  r.innerHTML="";
+  r.style.display="block";
+  let x=0;
+  const t=setInterval(()=>{
+    r.innerHTML+=text[x++];
+    if(x>=text.length) clearInterval(t);
+  },40);
 }
 
-function yesClick() {
- gift.style.display = "block";
- next.style.display = "inline-block";
- yes.style.display = no.style.display = "none";
+no.onclick=()=>{
+  noCount++;
+  yesSize+=4; noSize-=2;
+  yes.style.fontSize=yesSize+"px";
+  no.style.fontSize=Math.max(noSize,8)+"px";
+};
 
- if (i === 0) likeBox.style.display = "block";
- if (i === 1) crushBox.style.display = "block";
- if (i === 2) talkBox.style.display = "block";
- if (i === 3) knowBox.style.display = "block";
- if (i === 4) {
-   loveBox.style.display = "block";
-   startFireworks();
-   dropRoses();
- }
- if (i === 5) messageBox.style.display = "block";
- if (i === 6) whatsappBox.style.display = "block";
+yes.onclick=async()=>{
+  yes.style.display=no.style.display="none";
+  typeText(replies[i]);
+
+  await saveResponse({
+    question:questions[i],
+    yes:true,
+    noClicks:noCount,
+    message:msg.value || ""
+  });
+
+  if(i===4){fireworks();hearts();}
+  if(i===5) msg.style.display="block";
+
+  if(i===6){
+    wa.style.display="block";
+    q.innerText="Thank you for spending a little time with me 😊💖";
+    return;
+  }
+  next.style.display="inline-block";
+};
+
+next.onclick=()=>{
+  i++; noCount=0;
+  reset();
+  q.innerText=questions[i];
+};
+
+function reset(){
+  r.style.display="none";
+  msg.style.display="none";
+  yes.style.display=no.style.display="inline-block";
+  next.style.display="none";
+  yesSize=noSize=16;
+  yes.style.fontSize=no.style.fontSize="16px";
 }
 
-function nextQuestion() {
- i++;
- if (i < questions.length) {
-   reset();
-   question.innerText = questions[i];
- }
+function fireworks(){
+  for(let j=0;j<12;j++){
+    const f=document.createElement("div");
+    f.className="firework";
+    f.style.left=Math.random()*innerWidth+"px";
+    f.style.top=Math.random()*innerHeight+"px";
+    document.body.appendChild(f);
+    setTimeout(()=>f.remove(),1000);
+  }
 }
-
-function reset() {
- gift.style.display = next.style.display = messageBox.style.display = "none";
- likeBox.style.display = crushBox.style.display =
- talkBox.style.display = knowBox.style.display =
- loveBox.style.display = whatsappBox.style.display = "none";
- yes.style.display = no.style.display = "inline-block";
- yesSize = noSize = 16;
- yes.style.fontSize = no.style.fontSize = "16px";
-}
-
-function startFireworks() {
- for (let j=0;j<15;j++){
-  let f=document.createElement("div");
-  f.className="firework";
-  f.style.left=Math.random()*innerWidth+"px";
-  f.style.top=Math.random()*innerHeight+"px";
-  document.body.appendChild(f);
-  setTimeout(()=>f.remove(),1000);
- }
-}
-
-function dropRoses() {
- for (let j=0;j<12;j++){
-  let r=document.createElement("div");
-  r.className="rose";
-  r.innerText="🌹";
-  r.style.left=Math.random()*100+"vw";
-  document.body.appendChild(r);
-  setTimeout(()=>r.remove(),4000);
- }
+function hearts(){
+  for(let j=0;j<12;j++){
+    const h=document.createElement("div");
+    h.className="heart";
+    h.innerText="💖";
+    h.style.left=Math.random()*100+"vw";
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),4000);
+  }
 }
 </script>
-
 </body>
 </html>
-
