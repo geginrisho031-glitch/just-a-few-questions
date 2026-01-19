@@ -13,7 +13,7 @@ body{
   font-family:Arial,sans-serif;overflow:hidden;
 }
 
-/* ❤️ FLOATING HEART BACKGROUND */
+/* ❤️ HEART BACKGROUND */
 .hearts-bg{position:fixed;inset:0;pointer-events:none;z-index:0}
 .heart-bg{
   position:absolute;bottom:-20px;font-size:22px;
@@ -30,8 +30,9 @@ body{
 }
 @keyframes explode{
   to{
-    box-shadow:0 -60px red,0 60px yellow,60px 0 blue,
-    -60px 0 pink,45px 45px orange,-45px -45px violet;
+    box-shadow:
+      0 -60px red,0 60px yellow,60px 0 blue,
+      -60px 0 pink,45px 45px orange,-45px -45px violet;
     opacity:0
   }
 }
@@ -43,32 +44,27 @@ body{
   text-align:center;box-shadow:0 10px 25px rgba(0,0,0,.12)
 }
 
-/* CAT */
 .cat{font-size:62px;animation:bounce 1.5s infinite}
 @keyframes bounce{50%{transform:translateY(-10px)}}
 
-/* TEXT */
 #question{font-size:20px;font-weight:600}
 #reply{
   margin-top:12px;display:none;
   font-size:16px;line-height:1.6;word-spacing:2px
 }
 
-/* TEXTAREA */
 textarea{
   width:92%;height:70px;margin-top:12px;
   border-radius:12px;border:1px solid #ccc;
   padding:10px;display:none
 }
 
-/* ASCII */
 .ascii{
   margin-top:12px;background:#fff0f5;
   padding:12px;border-radius:16px;
   font-size:12px;display:none;white-space:pre
 }
 
-/* BUTTONS */
 button{
   border:none;border-radius:25px;
   padding:12px 25px;margin:10px;
@@ -78,7 +74,6 @@ button{
 #no{background:#f44336;color:#fff}
 #next{display:none;background:#2196F3;color:#fff}
 
-/* WHATSAPP */
 .whatsapp{display:none;margin-top:15px}
 .whatsapp a{color:#25D366;font-weight:bold;text-decoration:none}
 </style>
@@ -90,7 +85,6 @@ button{
 
 <div class="card">
   <div class="cat">🐱💖</div>
-
   <h2 id="question"></h2>
   <div id="reply"></div>
   <div id="asciiBox" class="ascii"></div>
@@ -98,7 +92,7 @@ button{
   <textarea id="messageBox" placeholder="You can type anything here 😊"></textarea>
 
   <div class="whatsapp" id="whatsappBox">
-    If you’d like, you can message me here 😊💖 click the number<br>
+    If you’d like, message me here 😊💖<br>
     <a href="https://wa.me/918300568519" target="_blank">📱 8300568519</a>
   </div>
 
@@ -107,7 +101,7 @@ button{
   <button id="next">Next ➡️</button>
 </div>
 
-<!-- ❤️ HEART BACKGROUND -->
+<!-- ❤️ HEARTS -->
 <script>
 const heartsBg=document.getElementById("heartsBg");
 setInterval(()=>{
@@ -119,7 +113,6 @@ setInterval(()=>{
   setTimeout(()=>h.remove(),8000);
 },700);
 
-/* 🎆 FIREWORKS */
 function fireworks(){
   for(let i=0;i<18;i++){
     const f=document.createElement("div");
@@ -191,16 +184,22 @@ const asciiArts=[
    ✨`,
 `∧,,,∧
 (  ̳• · • ̳)
- /    づ♡`,
+/    づ♡`,
 `(≧◡≦)
    😊`,
 `(♡˙︶˙♡)
    💞`
 ];
 
-let i=0;
-let yesSize=16,noSize=16;
-let noCount=0;   // ✅ NO click counter
+const messages=[
+ "Are you sure?",
+ "Really?",
+ "Think again 😅",
+ "Please 😭",
+ "Last chance 💔"
+];
+
+let i=0,yesSize=16,noSize=16,noCount=0,messageIndex=0;
 
 const q=document.getElementById("question");
 const r=document.getElementById("reply");
@@ -223,11 +222,15 @@ function typeText(text){
 }
 
 no.onclick=()=>{
-  noCount++; // ✅ count NO
-  yesSize+=4;
-  noSize-=2;
+  noCount++;
+  no.innerText=messages[messageIndex];
+  messageIndex=(messageIndex+1)%messages.length;
+
+  yesSize+=4; noSize-=2;
   yes.style.fontSize=yesSize+"px";
   no.style.fontSize=Math.max(noSize,10)+"px";
+
+  if(noCount>=1) yes.innerText="Yes ❤️";
 };
 
 yes.onclick=async()=>{
@@ -249,14 +252,12 @@ yes.onclick=async()=>{
 
   await saveResponse({
     question:questions[i],
-    answer:"yes",
-    noClicks:noCount, // ✅ saved
+    answer:noCount>0?"Yes":"yes",
+    noClicks:noCount,
     message:msg.value||""
   });
 
-  if(i < questions.length-1){
-    next.style.display="inline-block";
-  }
+  if(i<questions.length-1) next.style.display="inline-block";
 };
 
 next.onclick=()=>{
@@ -272,8 +273,12 @@ function reset(){
   wa.style.display="none";
   yes.style.display=no.style.display="inline-block";
   next.style.display="none";
+
   yesSize=noSize=16;
-  noCount=0; // ✅ reset for next question
+  noCount=0;
+  messageIndex=0;
+  yes.innerText="Yes 💙";
+  no.innerText="No 🤍";
   yes.style.fontSize=no.style.fontSize="16px";
 }
 </script>
